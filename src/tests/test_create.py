@@ -4,6 +4,33 @@ from test_fixtures import context
 from test_fixtures import log_groups
 from test_fixtures import create_event
 
+def test_missing_name(log_groups, create_event, context):
+  del create_event['ResourceProperties']['Name']
+  with pytest.raises(Exception) as e:
+    response = log_groups.handle(create_event,context)
+  assert "You must specify a log group name" in str(e)
+
+def test_invalid_name(log_groups, create_event, context):
+  create_event['ResourceProperties']['Name'] = "my:log:group"
+  with pytest.raises(Exception) as e:
+    response = log_groups.handle(create_event,context)
+  assert "Invalid log group name" in str(e)
+
+def test_invalid_retention(log_groups, create_event, context):
+  create_event['ResourceProperties']['Retention'] = '555'
+  with pytest.raises(Exception) as e:
+    response = log_groups.handle(create_event,context)
+  assert "Invalid retention period" in str(e)
+
+def test_invalid_subscription(log_groups, create_event, context):
+  create_event['ResourceProperties']['Subscription'] = {
+    'FilterName': 'Default',
+    'FilterPattern': '',
+  }
+  with pytest.raises(Exception) as e:
+    response = log_groups.handle(create_event,context)
+  assert "Invalid Subscription configuration" in str(e)
+
 def test_create_new_group(log_groups, create_event, context):
   return_value = log_groups.client.describe_log_groups.return_value
   log_groups.client.describe_log_groups.side_effect = [{'logGroups': []},test_fixtures.DESCRIBE_LOG_GROUPS]

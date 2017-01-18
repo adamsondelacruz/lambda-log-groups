@@ -48,7 +48,7 @@ def validate_input(name, retention):
     raise Exception("You must specify a log group name")
   if not re.match("^[a-zA-Z0-9_./-]*$", name):
     raise Exception("Invalid log group name.  Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (hyphen), '/' (forward slash), and '.'")
-  if not retention.isdigit() and int(retention) not in [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]:
+  if not retention.isdigit() or int(retention) not in [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]:
     raise Exception("Invalid retention period.  Valid values are 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653 days")
 
 def update_subscription(name, subscription, existing_subscription):

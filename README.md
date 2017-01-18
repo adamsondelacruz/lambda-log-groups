@@ -9,27 +9,64 @@ This function supports the following features:
 
 ## Build Instructions
 
-Any dependencies need to defined in `src/requirements.txt`.  Note that you do not need to include `boto3`, as this is provided by AWS for Python Lambda functions.
+### Requirements ###
 
-To build the function and its dependencies:
+- Docker 1.12 or higher
+- Docker Compose 1.8 or higher
+- GNU Make
+- jq
+- AWS CLI 1.11 or higher
+
+Any Lambda function dependencies need to defined in `src/requirements.txt`.  Note that you do not need to include `boto3`, as this is provided by AWS for Python Lambda functions.
+
+Any test dependencies need to be defined in `src/requirements_test.txt`.
+
+### Docker Build Instructions (recommended)
+
+To build the function and its dependencies in an AWS Linux environment:
+
+`make test`
+
+This will:
+
+- Create a Docker container based from the office `awslinux` Docker Hub image
+- Build ZIP file in container
+- Run unit tests in container
+- Copy ZIP file and test results to local `build` folder
+
+This build method is recommended as it will ensure any platform-specific requirements are built for an AWS Linux environment.
+
+### Local Build Instructions 
+
+To build the function and its dependencies locally:
 
 `make build`
 
-This will create the necessary dependencies in the `src` folder and create a ZIP package in the `target` folder.  This file is suitable for upload to the AWS Lambda service to create a Lambda function.
+This will create the necessary dependencies in the `src` folder and create a ZIP package in the `build` folder.  This file is suitable for upload to the AWS Lambda service to create a Lambda function.
 
 ```
 $ make build
 => Building cfnLogGroups.zip...
-Collecting cfn_resource (from -r requirements.txt (line 1))
-Installing collected packages: cfn-resource
-Successfully installed cfn-resource-0.2.2
-updating: cfn_resource-0.2.2.dist-info/ (stored 0%)
-updating: cfn_resource.py (deflated 67%)
-updating: cfn_resource.pyc (deflated 62%)
-updating: requirements.txt (stored 0%)
-updating: setup.cfg (stored 0%)
-updating: stack_resources.py (deflated 63%)
-=> Built target/cfnLogGroups.zip
+Collecting cfn-lambda-handler (from -r requirements.txt (line 1))
+  Using cached cfn_lambda_handler-1.0.2-py2.py3-none-any.whl
+Installing collected packages: cfn-lambda-handler
+Successfully installed cfn-lambda-handler-1.0.2
+  adding: log_groups.py (deflated 70%)
+  adding: requirements.txt (stored 0%)
+  adding: setup.cfg (stored 0%)
+  adding: vendor/ (stored 0%)
+  adding: vendor/cfn_lambda_handler/ (stored 0%)
+  adding: vendor/cfn_lambda_handler/__init__.py (deflated 28%)
+  adding: vendor/cfn_lambda_handler/cfn_lambda_handler.py (deflated 67%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/ (stored 0%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/DESCRIPTION.rst (stored 0%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/INSTALLER (stored 0%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/METADATA (deflated 56%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/metadata.json (deflated 52%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/RECORD (deflated 49%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/top_level.txt (stored 0%)
+  adding: vendor/cfn_lambda_handler-1.0.2.dist-info/WHEEL (deflated 14%)
+=> Built build/cfnLogGroups.zip
 ```
 
 ### Function Naming
